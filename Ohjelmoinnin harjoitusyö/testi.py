@@ -11,3 +11,10 @@ else:
     pienin = l3
 
 print(f"Pienin luku oli {pienin}.")
+
+vmp täsadäsdäaäsdäas asd sd
+f as
+df 
+sad
+f 
+asdf

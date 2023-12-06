@@ -11,3 +11,6 @@ else:
     pienin = l3
 
 print(f"Pienin luku oli {pienin}.")
+
+def haaska(kk: int):
+    return kk

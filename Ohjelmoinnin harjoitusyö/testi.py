@@ -11,3 +11,7 @@ else:
     pienin = l3
 
 print(f"Pienin luku oli {pienin}.")
+
+
+#KIKKELIKAKKELI
+#KADOSAJDOIJA

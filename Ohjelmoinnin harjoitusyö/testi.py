@@ -18,6 +18,7 @@ def haaska(kk: int):
 
 #Asd
 #ASd
-
+def kk(s: int):
+    return s
 #asd
 #Asd

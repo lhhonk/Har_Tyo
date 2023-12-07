@@ -124,14 +124,29 @@ def get_portf_vol(w, cov_mat):
     return np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
 
 def hintakaavio(weights):
-    # Calculate portfolio returns
     portfolio_returns = pd.Series(np.dot(weights, returns.T), index=returns.index)
-
-    # Convert to cumulative returns and scale to start from 100
     cumulative_returns = (1 + portfolio_returns).cumprod() * 100
 
-    # Plotting the cumulative returns
     plottaus(cumulative_returns)
+
+def compare_portfolios(weights1, weights2):
+    prt1_ret = pd.Series(np.dot(weights1, returns.T), index=returns.index)
+    returns1 = (1 + prt1_ret).cumprod() * 100
+
+    prt2_ret = pd.Series(np.dot(weights2, returns.T), index=returns.index)
+    returns2 = (1 + prt2_ret).cumprod() * 100
+
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(returns1.index, returns1, label="Portfolio 1", color='blue')
+    plt.plot(returns2.index, returns2, label="Portfolio 2", color='green')
+
+    plt.title('Portfolioiden vertailu')
+    plt.xlabel('Päivämäärä')
+    plt.ylabel('Portfolion tuotto (lähtötaso 100)')
+    plt.legend()
+
+    plt.show()
 
 #TIETOJEN LATAUS
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
@@ -157,5 +172,6 @@ rf_rate = 0 #oletetaan riskittömäksi 0%
 #print(form_max_sharpe_portfolio())
 #print(form_min_var_portfolio())
 
-hintakaavio(form_max_sharpe_portfolio())
+#hintakaavio(form_max_sharpe_portfolio())
+compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
 print("done")

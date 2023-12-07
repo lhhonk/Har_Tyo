@@ -33,7 +33,6 @@ def plottaus(returns):
     plt.legend()
     plt.show()
 
-
 def equal_weight_returns(returns):
     portfolio_weights = n_assets * [1 / n_assets] #equally-weighted
     portfolio_returns = pd.Series(np.dot(portfolio_weights, returns.T), index = returns.index) #np.dot = matrix multiplication, pd.series = stored data as pandas series
@@ -148,6 +147,15 @@ def compare_portfolios(weights1, weights2):
 
     plt.show()
 
+def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'):
+    plt.figure(figsize=(10, 6))
+    returns.plot(kind='kde', color='blue', lw = 2)
+
+    plt.title(title)
+    plt.xlabel(xlabel)
+    plt.ylabel('Tiheys')
+    plt.show()
+
 #TIETOJEN LATAUS
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
 df = pd.read_excel(file_path, skiprows=3, usecols=[1]) #luetaan tiedosto B-sarakkeen neljännestä rivistä alkaen
@@ -173,5 +181,6 @@ rf_rate = 0 #oletetaan riskittömäksi 0%
 #print(form_min_var_portfolio())
 
 #hintakaavio(form_max_sharpe_portfolio())
-compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
+#compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
+plot_return_histogram(equal_weight_returns(returns))
 print("done")

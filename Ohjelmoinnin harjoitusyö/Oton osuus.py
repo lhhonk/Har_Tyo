@@ -4,6 +4,7 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy.optimize as sco
+import pyfolio as pf
 
 def download_data(vector: list):
     with warnings.catch_warnings():
@@ -18,14 +19,20 @@ def download_data(vector: list):
 
 def plottaus(returns):
     plt.figure(figsize=(10, 6))
-    for column in returns.columns:
-        plt.plot(returns.index, returns[column], label=column)
 
-    plt.title('Asset Returns Over Time')
-    plt.xlabel('Date')
-    plt.ylabel('Returns')
+    # Check if returns is a DataFrame or a Series
+    if isinstance(returns, pd.DataFrame):
+        for column in returns.columns:
+            plt.plot(returns.index, returns[column], label=column)
+    elif isinstance(returns, pd.Series):
+        plt.plot(returns.index, returns, label=returns.name)
+
+    plt.title('Portfolion tuotto')
+    plt.xlabel('Päivämäärä')
+    plt.ylabel('Tuotto')
     plt.legend()
     plt.show()
+
 
 def equal_weight_returns(returns):
     portfolio_weights = n_assets * [1 / n_assets] #equally-weighted
@@ -116,6 +123,16 @@ def get_portf_rtn(w, avg_rtns):
 def get_portf_vol(w, cov_mat):
     return np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
 
+def hintakaavio(weights):
+    # Calculate portfolio returns
+    portfolio_returns = pd.Series(np.dot(weights, returns.T), index=returns.index)
+
+    # Convert to cumulative returns and scale to start from 100
+    cumulative_returns = (1 + portfolio_returns).cumprod() * 100
+
+    # Plotting the cumulative returns
+    plottaus(cumulative_returns)
+
 #TIETOJEN LATAUS
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
 df = pd.read_excel(file_path, skiprows=3, usecols=[1]) #luetaan tiedosto B-sarakkeen neljännestä rivistä alkaen
@@ -137,5 +154,8 @@ rf_rate = 0 #oletetaan riskittömäksi 0%
 
 #plottaus(returns)
 #equal_weight_returns(returns)
-print(form_max_sharpe_portfolio())
-print(form_min_var_portfolio())
+#print(form_max_sharpe_portfolio())
+#print(form_min_var_portfolio())
+
+hintakaavio(form_max_sharpe_portfolio())
+print("done")

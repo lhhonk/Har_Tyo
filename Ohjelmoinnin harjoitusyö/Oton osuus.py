@@ -110,17 +110,17 @@ def neg_sharpe_ratio(w, avg_rtns, cov_mat, rf_rate): #no need for for-loop, beca
     portf_sharpe_ratio = (portf_returns - rf_rate) / portf_volatility
     return -portf_sharpe_ratio
 
-#TIETOJEN LATAUS
-file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
-df = pd.read_excel(file_path, skiprows=3, usecols=[1]) #luetaan tiedosto B-sarakkeen neljännestä rivistä alkaen
-vector = df.iloc[:, 0].dropna().tolist() #muutetaan dataframe listaksi ja tiputetaan tyhjät arvot
-n_assets = len(vector)
-
 def get_portf_rtn(w, avg_rtns):
     return np.sum(avg_rtns * w)
 
 def get_portf_vol(w, cov_mat):
     return np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
+
+#TIETOJEN LATAUS
+file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
+df = pd.read_excel(file_path, skiprows=3, usecols=[1]) #luetaan tiedosto B-sarakkeen neljännestä rivistä alkaen
+vector = df.iloc[:, 0].dropna().tolist() #muutetaan dataframe listaksi ja tiputetaan tyhjät arvot
+n_assets = len(vector)
 
 try:
     returns = download_data(vector)

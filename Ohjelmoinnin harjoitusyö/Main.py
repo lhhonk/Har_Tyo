@@ -60,7 +60,7 @@ def plottaus(returns):
     plt.xlabel('Päivämäärä')
     plt.ylabel('Tuotto')
     plt.legend()
-    plt.show()
+    #plt.show()
 
 def equal_weight_returns(returns):
     portfolio_weights = n_assets * [1 / n_assets] #equally-weighted
@@ -174,7 +174,7 @@ def compare_portfolios(weights1, weights2):
     plt.ylabel('Portfolion tuotto (lähtötaso 100)')
     plt.legend()
 
-    plt.show()
+    #plt.show()
 
 def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'):
     plt.figure(figsize=(10, 6))
@@ -183,7 +183,7 @@ def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'):
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel('Tiheys')
-    plt.show()
+    #plt.show()
 
 #TIETOJEN LATAUS
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
@@ -213,14 +213,14 @@ plot1 = hintakaavio(form_max_sharpe_portfolio())
 plot2 = compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
 plot2 = plot_return_histogram(equal_weight_returns(returns))
 
-print("done")
+plt.show(plot1)
 
 ############################################################
 #Plotting and printing to excel
 ############################################################
-def plot_and_set():
-    ws1.pictures.add(plot1, name='plot1', update=True,
-                     left=ws1.range('M3').left,
-                     top=ws1.range('M3').top)
 
-plot_and_set()
+#ws1.pictures.add(plot1, name='plot1', update=True,
+#                    left=ws1.range('M3').left,
+#                    top=ws1.range('M3').top)
+
+print("done")

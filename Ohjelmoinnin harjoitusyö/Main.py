@@ -12,7 +12,7 @@ import scipy.optimize as sco #portfolio optimisation
 #Excel setting
 ############################################################
 #Excel workbook 'Main_i.xlsx' needs to be open to run the code properly
-wb = xw.Book('Main_i.xlsx')
+wb = xw.Book('Ohjelmoinnin harjoitusyö/Main_i.xlsx')
 
 #Worksheet import
 ws1 = wb.sheets['Dashboard']
@@ -48,7 +48,7 @@ def download_data(vector: list):
             return pd.DataFrame()  #jos adj. close ei saatavilla, palautetaan tyhjä dataframe
 
 def plottaus(returns):
-    rtn_plot = plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 6))
 
     if isinstance(returns, pd.DataFrame): #tarkistetaan onko dataframe vai series
         for column in returns.columns:
@@ -61,7 +61,7 @@ def plottaus(returns):
     plt.ylabel('Tuotto')
     plt.legend()
 
-    return rtn_plot
+    return plt.gcf()
 
 def equal_weight_returns(returns):
     portfolio_weights = n_assets * [1 / n_assets] #equally-weighted
@@ -72,6 +72,7 @@ def get_portf_rtn(weights, avg_rtns):
     return np.sum(avg_rtns * weights)
 
 def form_min_var_portfolio():
+    print("Processing...")
     rtns_range = np.linspace(-0.50, 0.50, 200) #considered range of returns, next line of code will run function with all expected returns
     efficient_portfolios = get_efficient_frontier(avg_returns, cov_mat, rtns_range) #calculating the efficient frontier and placing them in a list
     vols_range = [x["fun"] for x in efficient_portfolios] #extracting volatilities of efficient portfolios
@@ -165,25 +166,25 @@ def compare_portfolios(weights1, weights2):
     prt2_ret = pd.Series(np.dot(weights2, returns.T), index=returns.index)
     returns2 = (1 + prt2_ret).cumprod() * 100
 
-    two_plots = plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 6))
 
-    plt.plot(returns1.index, returns1, label="Portfolio 1", color='blue')
-    plt.plot(returns2.index, returns2, label="Portfolio 2", color='green')
+    plt.plot(returns1.index, returns1, label="Max Sharpe Portfolio", color='blue')
+    plt.plot(returns2.index, returns2, label="Minimivarianssiportfolio", color='green')
 
     plt.title('Portfolioiden vertailu')
     plt.xlabel('Päivämäärä')
     plt.ylabel('Portfolion tuotto (lähtötaso 100)')
     plt.legend()
-    return two_plots
+    return plt.gcf()
 
 def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'):
-    rtn_plot_hist = plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 6))
     returns.plot(kind='kde', color='blue', lw = 2)
 
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel('Tiheys')
-    return rtn_plot_hist
+    return plt.gcf()
 
 #TIETOJEN LATAUS
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'

@@ -16,6 +16,7 @@ wb = xw.Book('Ohjelmoinnin harjoitusyö/Main_i.xlsx')
 
 #Worksheet import
 ws1 = wb.sheets['Dashboard']
+ws2 = wb.sheets['Ticker']
 
 #Defining the reset function for the users sheet
 def reset_worksheet_dashboard():

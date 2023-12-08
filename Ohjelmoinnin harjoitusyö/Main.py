@@ -13,6 +13,7 @@ import scipy.optimize as sco #portfolio optimisation
 ############################################################
 #Excel workbook 'Main_i.xlsx' needs to be open to run the code properly
 wb = xw.Book('Ohjelmoinnin harjoitusyö/Main_i.xlsx')
+wb.save()
 
 #Worksheet import
 ws1 = wb.sheets['Dashboard']

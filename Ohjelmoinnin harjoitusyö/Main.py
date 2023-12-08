@@ -48,7 +48,7 @@ def download_data(vector: list):
             return pd.DataFrame()  #jos adj. close ei saatavilla, palautetaan tyhjä dataframe
 
 def plottaus(returns):
-    rtn_plot = plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 6))
 
     if isinstance(returns, pd.DataFrame): #tarkistetaan onko dataframe vai series
         for column in returns.columns:
@@ -61,7 +61,7 @@ def plottaus(returns):
     plt.ylabel('Tuotto')
     plt.legend()
 
-    return rtn_plot
+    return plt.gcf()
 
 def equal_weight_returns(returns):
     portfolio_weights = n_assets * [1 / n_assets] #equally-weighted
@@ -166,7 +166,7 @@ def compare_portfolios(weights1, weights2):
     prt2_ret = pd.Series(np.dot(weights2, returns.T), index=returns.index)
     returns2 = (1 + prt2_ret).cumprod() * 100
 
-    two_plots = plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 6))
 
     plt.plot(returns1.index, returns1, label="Portfolio 1", color='blue')
     plt.plot(returns2.index, returns2, label="Portfolio 2", color='green')
@@ -175,16 +175,16 @@ def compare_portfolios(weights1, weights2):
     plt.xlabel('Päivämäärä')
     plt.ylabel('Portfolion tuotto (lähtötaso 100)')
     plt.legend()
-    return two_plots
+    return plt.gcf()
 
 def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'):
-    rtn_plot_hist = plt.figure(figsize=(10, 6))
+    plt.figure(figsize=(10, 6))
     returns.plot(kind='kde', color='blue', lw = 2)
 
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel('Tiheys')
-    return rtn_plot_hist
+    return plt.gcf()
 
 #TIETOJEN LATAUS
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
@@ -211,17 +211,34 @@ rf_rate = 0 #oletetaan riskittömäksi 0%
 #print(form_min_var_portfolio())
 
 plot1 = hintakaavio(form_max_sharpe_portfolio())
-plot2 = compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
-plot2 = plot_return_histogram(equal_weight_returns(returns))
-
+#plot2 = compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
+#plot2 = plot_return_histogram(equal_weight_returns(returns))
+#plt.show()
 print("done")
 
 ############################################################
 #Plotting and printing to excel
 ############################################################
-def plot_and_set():
-    ws1.pictures.add(plot1, name='plot1', update=True,
+def plot_and_set(plot, ws1):
+    import io
+    from PIL import Image
+
+    # Save the plot to a BytesIO object
+    buffer = io.BytesIO()
+    plot.savefig(buffer, format='png')
+    buffer.seek(0)
+
+    # Use PIL to open the image and convert to a format xlwings understands
+    image = Image.open(buffer)
+
+    # Add the image to the worksheet
+    ws1.pictures.add(image, name='plot', update=True,
                      left=ws1.range('M3').left,
                      top=ws1.range('M3').top)
 
-plot_and_set()
+    # Close the buffer
+    buffer.close()
+
+# Usage
+plot_and_set(plot1, ws1)
+

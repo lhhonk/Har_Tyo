@@ -1,13 +1,12 @@
 #pip install "xlwings[all]"            #Numpy, pandas, matplotlib, Pillow, Jinja2
 
 import xlwings as xw #xlwings for excel manipulation
-import pandas as pd
-import yfinance as yf
-import warnings
-import matplotlib.pyplot as plt
-import numpy as np
-import scipy.optimize as sco
-import pyfolio as pf
+import pandas as pd #for data manipulation with dataframes
+import yfinance as yf #to download data from yahoo finance
+import warnings #disable possible warnings
+import matplotlib.pyplot as plt #plotting data
+import numpy as np #data manipulation
+import scipy.optimize as sco #portfolio optimisation
 
 ############################################################
 #Excel setting
@@ -51,8 +50,7 @@ def download_data(vector: list):
 def plottaus(returns):
     plt.figure(figsize=(10, 6))
 
-    # Check if returns is a DataFrame or a Series
-    if isinstance(returns, pd.DataFrame):
+    if isinstance(returns, pd.DataFrame): #tarkistetaan onko dataframe vai series
         for column in returns.columns:
             plt.plot(returns.index, returns[column], label=column)
     elif isinstance(returns, pd.Series):

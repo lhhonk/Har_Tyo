@@ -48,7 +48,7 @@ def download_data(vector: list):
             return pd.DataFrame()  #jos adj. close ei saatavilla, palautetaan tyhjä dataframe
 
 def plottaus(returns):
-    plt.figure(figsize=(10, 6))
+    rtn_plot = plt.figure(figsize=(10, 6))
 
     if isinstance(returns, pd.DataFrame): #tarkistetaan onko dataframe vai series
         for column in returns.columns:
@@ -60,7 +60,8 @@ def plottaus(returns):
     plt.xlabel('Päivämäärä')
     plt.ylabel('Tuotto')
     plt.legend()
-    plt.show()
+
+    return rtn_plot
 
 def equal_weight_returns(returns):
     portfolio_weights = n_assets * [1 / n_assets] #equally-weighted
@@ -164,7 +165,7 @@ def compare_portfolios(weights1, weights2):
     prt2_ret = pd.Series(np.dot(weights2, returns.T), index=returns.index)
     returns2 = (1 + prt2_ret).cumprod() * 100
 
-    plt.figure(figsize=(10, 6))
+    two_plots = plt.figure(figsize=(10, 6))
 
     plt.plot(returns1.index, returns1, label="Portfolio 1", color='blue')
     plt.plot(returns2.index, returns2, label="Portfolio 2", color='green')
@@ -173,17 +174,16 @@ def compare_portfolios(weights1, weights2):
     plt.xlabel('Päivämäärä')
     plt.ylabel('Portfolion tuotto (lähtötaso 100)')
     plt.legend()
-
-    plt.show()
+    return two_plots
 
 def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'):
-    plt.figure(figsize=(10, 6))
+    rtn_plot_hist = plt.figure(figsize=(10, 6))
     returns.plot(kind='kde', color='blue', lw = 2)
 
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel('Tiheys')
-    plt.show()
+    return rtn_plot_hist
 
 #TIETOJEN LATAUS
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'

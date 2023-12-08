@@ -157,7 +157,7 @@ def hintakaavio(weights):
     portfolio_returns = pd.Series(np.dot(weights, returns.T), index=returns.index)
     cumulative_returns = (1 + portfolio_returns).cumprod() * 100
 
-    plottaus(cumulative_returns)
+    return plottaus(cumulative_returns)
 
 def compare_portfolios(weights1, weights2):
     prt1_ret = pd.Series(np.dot(weights1, returns.T), index=returns.index)
@@ -210,35 +210,18 @@ rf_rate = 0 #oletetaan riskittömäksi 0%
 #print(form_max_sharpe_portfolio())
 #print(form_min_var_portfolio())
 
-plot1 = hintakaavio(form_max_sharpe_portfolio())
-#plot2 = compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
-#plot2 = plot_return_histogram(equal_weight_returns(returns))
-#plt.show()
-print("done")
+plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio()))
+plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #kahden plotin tekemiseen
+plot2 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
 
 ############################################################
 #Plotting and printing to excel
 ############################################################
-def plot_and_set(plot, ws1):
-    import io
-    from PIL import Image
 
-    # Save the plot to a BytesIO object
-    buffer = io.BytesIO()
-    plot.savefig(buffer, format='png')
-    buffer.seek(0)
+print("Start plotting from \n I \n I \n here")
 
-    # Use PIL to open the image and convert to a format xlwings understands
-    image = Image.open(buffer)
+ws1.pictures.add(plot1, name='plot1', update=True)
+ws1.pictures.add(plot1, name='plot2', update=True)
+ws1.pictures.add(plot1, name='plot2', update=True)
 
-    # Add the image to the worksheet
-    ws1.pictures.add(image, name='plot', update=True,
-                     left=ws1.range('M3').left,
-                     top=ws1.range('M3').top)
-
-    # Close the buffer
-    buffer.close()
-
-# Usage
-plot_and_set(plot1, ws1)
-
+print("done")

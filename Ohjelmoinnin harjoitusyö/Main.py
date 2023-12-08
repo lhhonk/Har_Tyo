@@ -211,13 +211,18 @@ rf_rate = 0 #oletetaan riskittömäksi 0%
 #print(form_max_sharpe_portfolio())
 #print(form_min_var_portfolio())
 
-#hintakaavio(form_max_sharpe_portfolio())
-#compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
-plot_return_histogram(equal_weight_returns(returns))
+plot1 = hintakaavio(form_max_sharpe_portfolio())
+plot2 = compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio()) #kahden plotin tekemiseen
+plot2 = plot_return_histogram(equal_weight_returns(returns))
+
 print("done")
 
 ############################################################
 #Plotting and printing to excel
 ############################################################
+def plot_and_set():
+    ws1.pictures.add(plot1, name='plot1', update=True,
+                     left=ws1.range('M3').left,
+                     top=ws1.range('M3').top)
 
-
+plot_and_set()

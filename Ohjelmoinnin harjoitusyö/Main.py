@@ -12,7 +12,7 @@ import scipy.optimize as sco #portfolio optimisation
 #Excel setting
 ############################################################
 #Excel workbook 'Main_i.xlsx' needs to be open to run the code properly
-wb = xw.Book('Main_i.xlsx')
+wb = xw.Book('Ohjelmoinnin harjoitusyö/Main_i.xlsx')
 
 #Worksheet import
 ws1 = wb.sheets['Dashboard']
@@ -72,6 +72,7 @@ def get_portf_rtn(weights, avg_rtns):
     return np.sum(avg_rtns * weights)
 
 def form_min_var_portfolio():
+    print("Processing...")
     rtns_range = np.linspace(-0.50, 0.50, 200) #considered range of returns, next line of code will run function with all expected returns
     efficient_portfolios = get_efficient_frontier(avg_returns, cov_mat, rtns_range) #calculating the efficient frontier and placing them in a list
     vols_range = [x["fun"] for x in efficient_portfolios] #extracting volatilities of efficient portfolios

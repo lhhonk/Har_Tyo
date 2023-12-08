@@ -211,7 +211,7 @@ rf_rate = 0 #oletetaan riskittömäksi 0%
 
 plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio()))
 plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #kahden plotin tekemiseen
-plot2 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
+plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
 
 ############################################################
 #Plotting and printing to excel
@@ -220,7 +220,7 @@ plot2 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
 print("Start plotting from \n I \n I \n here")
 
 ws1.pictures.add(plot1, name='plot1', update=True)
-ws1.pictures.add(plot1, name='plot2', update=True)
-ws1.pictures.add(plot1, name='plot2', update=True)
+ws1.pictures.add(plot2, name='plot2', update=True)
+ws1.pictures.add(plot3, name='plot3', update=True)
 
 print("done")

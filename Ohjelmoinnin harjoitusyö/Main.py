@@ -168,8 +168,8 @@ def compare_portfolios(weights1, weights2):
 
     plt.figure(figsize=(10, 6))
 
-    plt.plot(returns1.index, returns1, label="Portfolio 1", color='blue')
-    plt.plot(returns2.index, returns2, label="Portfolio 2", color='green')
+    plt.plot(returns1.index, returns1, label="Max Sharpe Portfolio", color='blue')
+    plt.plot(returns2.index, returns2, label="Minimivarianssiportfolio", color='green')
 
     plt.title('Portfolioiden vertailu')
     plt.xlabel('Päivämäärä')

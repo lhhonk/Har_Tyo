@@ -41,11 +41,16 @@ def download_data(vector: list):
         warnings.simplefilter("ignore", FutureWarning)  #filtteröidään future warning pois
         prices_df = yf.download(vector, period="1y", auto_adjust=False)
 
-        if 'Adj Close' in prices_df.columns:
-            prices_df['Adj Close'] = prices_df['Adj Close'].ffill()
-            return prices_df["Adj Close"].pct_change().dropna()  #simple asset returns
-        else:
-            return pd.DataFrame()  #jos adj. close ei saatavilla, palautetaan tyhjä dataframe
+    if 'Adj Close' in prices_df.columns:
+        prices_df = prices_df['Adj Close'].ffill()  # Forward fill to handle missing data
+
+        # Drop columns where all values are NaN (i.e., no data for the ticker)
+        prices_df = prices_df.dropna(axis=1, how='all')
+
+        # Calculate percent change to get returns
+        return prices_df.pct_change().dropna()
+    else:
+        return pd.DataFrame()  # If 'Adj Close' not available, return an empty DataFrame
 
 def plottaus(returns):
     plt.figure(figsize=(10, 6))
@@ -206,14 +211,14 @@ cov_mat = returns.cov() * 12 #covariance-matrix
 rf_rate = 0 #oletetaan riskittömäksi 0%
 
 #plottaus(returns)
-#equal_weight_returns(returns)
+hintakaavio(equal_weight_returns(returns))
 #print(form_max_sharpe_portfolio())
 #print(form_min_var_portfolio())
 
-plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio()))
-plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #kahden plotin tekemiseen
-plot2 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
-
+#plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio()))
+#plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #kahden plotin tekemiseen
+#plot2 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
+plt.show()
 ############################################################
 #Plotting and printing to excel
 ############################################################

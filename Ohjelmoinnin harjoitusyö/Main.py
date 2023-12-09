@@ -253,7 +253,7 @@ rf_rate = 0 #assume risk-free rate to be 0%
 
 combined_returns = get_combined_returns(returns)
 metrics = calculate_metrics(combined_returns)
-print_to_excel(metrics, ws1)  # Assuming ws1 is your target worksheet
+print_to_excel(metrics, ws1)  
 
 #defining the plot variables with a 'Figure' variable type
 plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio())) #(Max sharpe portfolio, plot)

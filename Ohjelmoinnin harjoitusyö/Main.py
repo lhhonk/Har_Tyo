@@ -191,7 +191,10 @@ def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'): #pl
     plt.ylabel('Tiheys')
     return plt.gcf()
 
-###############DOWNLOADING THE DATA FROM EXCEL###############
+############################################################
+#Downloading the data from excel
+############################################################
+
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
 df = pd.read_excel(file_path, skiprows=3, usecols=[1]) #read file starting from b-column's 4th row
 vector = df.iloc[:, 0].dropna().tolist() #make dataframe into a list and drop empty values
@@ -215,9 +218,9 @@ hintakaavio(equal_weight_returns(returns))
 #print(form_max_sharpe_portfolio())
 #print(form_min_var_portfolio())
 
-plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio()))
-plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #kahden plotin tekemiseen
-plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
+plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio())) #plot of max sharpe portfolio
+plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #to make two plots
+plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns))) #plotting histogram of equal weight portfolio
 
 ############################################################
 #Plotting and printing to excel

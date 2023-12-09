@@ -13,9 +13,11 @@ import scipy.optimize as sco #portfolio optimisation
 ############################################################
 #Excel workbook 'Main_i.xlsx' needs to be open to run the code properly
 wb = xw.Book('Ohjelmoinnin harjoitusyö/Main_i.xlsx')
+wb.save()
 
 #Worksheet import
 ws1 = wb.sheets['Dashboard']
+ws2 = wb.sheets['Ticker']
 
 #Defining the reset function for the users sheet
 def reset_worksheet_dashboard():
@@ -215,10 +217,10 @@ hintakaavio(equal_weight_returns(returns))
 #print(form_max_sharpe_portfolio())
 #print(form_min_var_portfolio())
 
-#plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio()))
-#plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #kahden plotin tekemiseen
-#plot2 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
-plt.show()
+plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio()))
+plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #kahden plotin tekemiseen
+plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
+
 ############################################################
 #Plotting and printing to excel
 ############################################################
@@ -226,7 +228,7 @@ plt.show()
 print("Start plotting from \n I \n I \n here")
 
 ws1.pictures.add(plot1, name='plot1', update=True)
-ws1.pictures.add(plot1, name='plot2', update=True)
-ws1.pictures.add(plot1, name='plot2', update=True)
+ws1.pictures.add(plot2, name='plot2', update=True)
+ws1.pictures.add(plot3, name='plot3', update=True)
 
 print("done")

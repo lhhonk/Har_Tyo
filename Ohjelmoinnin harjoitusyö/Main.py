@@ -44,22 +44,20 @@ def download_data(vector: list):
         prices_df = yf.download(vector, period="1y", auto_adjust=False)
 
     if 'Adj Close' in prices_df.columns:
-        prices_df = prices_df['Adj Close'].ffill()  # Forward fill to handle missing data
+        prices_df = prices_df['Adj Close'].ffill()  #fill possible missing data points
+        
+        prices_df = prices_df.dropna(axis=1, how='all') #remove columns where all values are NaN (no data for ticker)
 
-        # Drop columns where all values are NaN (i.e., no data for the ticker)
-        prices_df = prices_df.dropna(axis=1, how='all')
-
-        # Calculate percent change to get returns
-        return prices_df.pct_change().dropna()
+        return prices_df.pct_change().dropna() #calculate percent change to get returns
     else:
-        return pd.DataFrame()  # If 'Adj Close' not available, return an empty DataFrame
+        return pd.DataFrame()  #if 'Adj Close' not available, return empty dataframe
 
 def plottaus(returns):
     plt.figure(figsize=(10, 6))
 
-    if isinstance(returns, pd.DataFrame): #tarkistetaan onko dataframe vai series
+    if isinstance(returns, pd.DataFrame): #check if data is series or dataframe
         for column in returns.columns:
-            plt.plot(returns.index, returns[column], label=column)
+            plt.plot(returns.index, returns[column], label=column) #define plot data and index
     elif isinstance(returns, pd.Series):
         plt.plot(returns.index, returns, label=returns.name)
 
@@ -68,17 +66,17 @@ def plottaus(returns):
     plt.ylabel('Tuotto')
     plt.legend()
 
-    return plt.gcf()
+    return plt.gcf() #return current plot
 
-def equal_weight_returns(returns):
+def equal_weight_returns(returns): #calculate returns of equal-weighted portfolio
     portfolio_weights = n_assets * [1 / n_assets] #equally-weighted
     portfolio_returns = pd.Series(np.dot(portfolio_weights, returns.T), index = returns.index) #np.dot = matrix multiplication, pd.series = stored data as pandas series
     return portfolio_returns
 
-def get_portf_rtn(weights, avg_rtns):
-    return np.sum(avg_rtns * weights)
+def get_portf_rtn(weights, avg_rtns): #calculate returns for any portfolio
+    return np.sum(avg_rtns * weights) 
 
-def form_min_var_portfolio():
+def form_min_var_portfolio(): #form minimum variance portfolio weights
     print("Processing...")
     rtns_range = np.linspace(-0.50, 0.50, 200) #considered range of returns, next line of code will run function with all expected returns
     efficient_portfolios = get_efficient_frontier(avg_returns, cov_mat, rtns_range) #calculating the efficient frontier and placing them in a list
@@ -94,21 +92,21 @@ def form_min_var_portfolio():
     mvpw = [] #min-var portfolio weights
 
     for x, y in zip(vector, efficient_portfolios[min_vol_ind]["x"]):
-        rounded_weight = round(100 * y, 2)  #pyöristetään
+        rounded_weight = round(100 * y, 2)  #round out weights to two decimals
         #print(f"{x}: {rounded_weight:.2f}% ", end="", flush=True)
-        mvpw.append(rounded_weight / 100)  #lisätään paino listaan ja takaisin prosenttimuotoon
+        mvpw.append(rounded_weight / 100)  #add weight to list in decimal form
 
     #minvar_portfolio_returns = pd.Series(np.dot(mvpw, returns.T), index = returns.index)
-    return mvpw
+    return mvpw #return list of weights
 
-def form_max_sharpe_portfolio():
+def form_max_sharpe_portfolio(): #same as above but for max sharpe ratio portfolio
     args = (avg_returns, cov_mat, rf_rate)
     constraints = ({"type": "eq", "fun": lambda x: np.sum(x) - 1}) #weight of assets must equal to 1
     bounds = tuple((0,1) for asset in range(n_assets)) #individual asset weights cannot go below zero (or 100%), no shorting allowed
     initial_guess = n_assets * [1. / n_assets]
-    max_sharpe_portf = sco.minimize(neg_sharpe_ratio, x0 = initial_guess,
+    max_sharpe_portf = sco.minimize(neg_sharpe_ratio, x0 = initial_guess, #optimise using scipy library
                                     args = args,
-                                    method = "SLSQP",
+                                    method = "SLSQP", #sequential least-squares programming, solves optimization problems
                                     bounds = bounds,
                                     constraints = constraints)
 
@@ -121,14 +119,14 @@ def form_max_sharpe_portfolio():
     spw = [] #sharpe portfolio weights
 
     for x, y in zip(vector, max_sharpe_portf_w):
-        rounded_weight = round(100 * y, 2)  #pyöristetään
+        rounded_weight = round(100 * y, 2)  #round out
         #print(f"{x}: {rounded_weight:.2f}% ", end="", flush=True)
-        spw.append(rounded_weight / 100)  #lisätään paino listaan ja takaisin prosenttimuotoon
+        spw.append(rounded_weight / 100)  #add weight to list in decimal form
 
     #sharpe_portfolio_returns = pd.Series(np.dot(spw, returns.T), index = returns.index)
     return spw
 
-def get_efficient_frontier(avg_rtns, cov_mat, rtns_range):
+def get_efficient_frontier(avg_rtns, cov_mat, rtns_range): #to find out the combination of efficient portfolios on different returns
     efficient_portfolios = []
     n_assets = len(avg_returns)
     args = (cov_mat,) #covariance matrix
@@ -148,25 +146,25 @@ def get_efficient_frontier(avg_rtns, cov_mat, rtns_range):
     
     return efficient_portfolios
 
-def neg_sharpe_ratio(w, avg_rtns, cov_mat, rf_rate): #no need for for-loop, becayse searching for only one set of weights
+def neg_sharpe_ratio(w, avg_rtns, cov_mat, rf_rate): #no need for for-loop, because searching for only one set of weights
     portf_returns = np.sum(avg_rtns * w)
     portf_volatility = np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
     portf_sharpe_ratio = (portf_returns - rf_rate) / portf_volatility
     return -portf_sharpe_ratio
 
-def get_portf_rtn(w, avg_rtns):
+def get_portf_rtn(w, avg_rtns): #get portfolio return
     return np.sum(avg_rtns * w)
 
-def get_portf_vol(w, cov_mat):
+def get_portf_vol(w, cov_mat): #get portfolio volatility
     return np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
 
-def hintakaavio(weights):
+def hintakaavio(weights): #plotting portfolio returns
     portfolio_returns = pd.Series(np.dot(weights, returns.T), index=returns.index)
     cumulative_returns = (1 + portfolio_returns).cumprod() * 100
 
     return plottaus(cumulative_returns)
 
-def compare_portfolios(weights1, weights2):
+def compare_portfolios(weights1, weights2): #plotting returns of two portfolios in same graph
     prt1_ret = pd.Series(np.dot(weights1, returns.T), index=returns.index)
     returns1 = (1 + prt1_ret).cumprod() * 100
 
@@ -184,7 +182,7 @@ def compare_portfolios(weights1, weights2):
     plt.legend()
     return plt.gcf()
 
-def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'):
+def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'): #plotting histogram of return values
     plt.figure(figsize=(10, 6))
     returns.plot(kind='kde', color='blue', lw = 2)
 
@@ -193,15 +191,15 @@ def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'):
     plt.ylabel('Tiheys')
     return plt.gcf()
 
-#TIETOJEN LATAUS
+###############DOWNLOADING THE DATA FROM EXCEL###############
 file_path = 'Ohjelmoinnin harjoitusyö/Main_i.xlsx'
-df = pd.read_excel(file_path, skiprows=3, usecols=[1]) #luetaan tiedosto B-sarakkeen neljännestä rivistä alkaen
-vector = df.iloc[:, 0].dropna().tolist() #muutetaan dataframe listaksi ja tiputetaan tyhjät arvot
+df = pd.read_excel(file_path, skiprows=3, usecols=[1]) #read file starting from b-column's 4th row
+vector = df.iloc[:, 0].dropna().tolist() #make dataframe into a list and drop empty values
 n_assets = len(vector)
 
 try:
     returns = download_data(vector)
-    if not returns.empty:
+    if not returns.empty: #if no data is available for ticker
         print(returns)
     else:
         print("No data available for the given tickers.")
@@ -210,7 +208,7 @@ except Exception as e:
 
 avg_returns = returns.mean() * 12 #average returns
 cov_mat = returns.cov() * 12 #covariance-matrix 
-rf_rate = 0 #oletetaan riskittömäksi 0%
+rf_rate = 0 #assume risk-free rate to be 0%
 
 #plottaus(returns)
 hintakaavio(equal_weight_returns(returns))

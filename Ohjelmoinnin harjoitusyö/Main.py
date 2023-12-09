@@ -262,4 +262,6 @@ ws1.pictures.add(plot1, name='plot1', update=True)
 ws1.pictures.add(plot2, name='plot2', update=True)
 ws1.pictures.add(plot3, name='plot3', update=True)
 
+wb.save()
+
 print("done")

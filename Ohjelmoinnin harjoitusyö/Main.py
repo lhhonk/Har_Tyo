@@ -12,34 +12,34 @@ import scipy.optimize as sco #portfolio optimisation
 #Excel setting
 ############################################################
 
-#Excel workbook 'Main_i.xlsx' needs to be open to run the code properly
+#excel workbook 'Main_i.xlsx' needs to be open to run the code properly
 wb = xw.Book('Ohjelmoinnin harjoitusyö/Main_i.xlsx')
 
-#Worksheet import
+#worksheet import
 ws1 = wb.sheets['Dashboard']
 ws2 = wb.sheets['Ticker']
 
-#Defining the reset function for the users sheet
+#defining the reset function for the users sheet
 def reset_worksheet_dashboard():
     wb = xw.Book('Main_i.xlsx')
     ws1 = wb.sheets['Dashboard']
 
-    # Define the range for deletion and deleting the content from the 'variance, mean and sharpe' table
+    # define the range for deletion and deleting the content from the 'variance, mean and sharpe' table
     ws1.range('J6:M1048576').clear_contents()
 
-#Deleting the content before new content
+#deleting the content before new content
 reset_worksheet_dashboard()
 
-#Saving the workbooks, otherwise the new tickers - typed in as user desires - wont be used in the new calculation
+#saving the workbooks, otherwise the new tickers - typed in as user desires - wont be used in the new calculation
 wb.save()
 
 ############################################################
 #Portfolio testing
 ############################################################
 
-def download_data(vector: list):
+def download_data(vector: list): #download data
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore", FutureWarning)  #filtteröidään future warning pois
+        warnings.simplefilter("ignore", FutureWarning)  #filter warnings
         prices_df = yf.download(vector, period="1y", auto_adjust=False)
 
     if 'Adj Close' in prices_df.columns:
@@ -187,54 +187,39 @@ def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'): #pl
     plt.ylabel('Tiheys')
     return plt.gcf()
 
-def get_combined_returns(returns):
-    # Get portfolio weights
+def get_combined_returns(returns): #combine the returns of tickers and portfolios into one dataframe for easier manipulation later
     min_var_weights = form_min_var_portfolio()
     max_sharpe_weights = form_max_sharpe_portfolio()
 
-    # Calculate portfolio returns
     min_var_returns = pd.Series(np.dot(min_var_weights, returns.T), index=returns.index)
     max_sharpe_returns = pd.Series(np.dot(max_sharpe_weights, returns.T), index=returns.index)
 
-    # Add to the returns DataFrame in the desired order
-    combined_returns = pd.DataFrame()
+    combined_returns = pd.DataFrame() #make empty dataframe
     combined_returns['Min Var Portfolio'] = min_var_returns
     combined_returns['Max Sharpe Portfolio'] = max_sharpe_returns
 
-    # Concatenate with individual ticker returns
-    combined_returns = pd.concat([combined_returns, returns], axis=1)
+    combined_returns = pd.concat([combined_returns, returns], axis=1) #combine tickers and portfolios
 
     return combined_returns
 
-def calculate_metrics(combined_returns, rf_rate=0):
+def calculate_metrics(combined_returns, rf_rate=0): #calculate the metrics we want to show in excel file
     metrics = pd.DataFrame(index=combined_returns.columns, columns=['Return', 'Volatility', 'Sharpe Ratio'])
 
     for column in combined_returns.columns:
-        # Annualize the returns and volatility
-        annual_return = np.sum(combined_returns[column].mean()) * 252
+        annual_return = np.sum(combined_returns[column].mean()) * 252 #annualise return and volatility
         annual_volatility = combined_returns[column].std() * np.sqrt(252)
-        print(column)
-        print(annual_return)
-        print(annual_volatility)
-        # Sharpe ratio
-        sharpe_ratio = (annual_return - rf_rate) / annual_volatility
+        sharpe_ratio = (annual_return - rf_rate) / annual_volatility #sharpe ratio
 
-        # Add to DataFrame
-        metrics.loc[column] = [annual_return, annual_volatility, sharpe_ratio]
-        print(sharpe_ratio)
+        metrics.loc[column] = [annual_return, annual_volatility, sharpe_ratio] #add to dataframe
 
     return metrics
 
-def print_to_excel(metrics, ws):
+def print_to_excel(metrics, ws): #print the metrics into the excel file starting from column J row 6
     for i, (index, row) in enumerate(metrics.iterrows(), start=5):
         ws.range(f'J{i+1}').value = index  # Ticker/Portfolio name
         ws.range(f'K{i+1}').value = row['Return']
         ws.range(f'L{i+1}').value = row['Volatility']
         ws.range(f'M{i+1}').value = row['Sharpe Ratio']
-
-# Example usage
-
-
 
 ############################################################
 #Downloading the data from excel
@@ -263,7 +248,7 @@ combined_returns = get_combined_returns(returns)
 metrics = calculate_metrics(combined_returns)
 print_to_excel(metrics, ws1)  # Assuming ws1 is your target worksheet
 
-#Defining the plot variables with a 'Figure' variable type
+#defining the plot variables with a 'Figure' variable type
 plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio())) #(Max sharpe portfolio, plot)
 plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #(Price, doubleplot)
 plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns))) #(Return, histogram)
@@ -272,13 +257,9 @@ plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns))) #(Retur
 #Plotting and printing to excel
 ############################################################
 
-print("Start plotting from \n I \n I \n here")
-
-#Moving the plots to the excel 'update=True -> as we want to update the plot every time the script is run'
+#moving the plots to the excel 'update=True -> as we want to update the plot every time the script is run'
 ws1.pictures.add(plot1, name='plot1', update=True)
 ws1.pictures.add(plot2, name='plot2', update=True)
 ws1.pictures.add(plot3, name='plot3', update=True)
-
-#Printing the ticker data and portfolio data to the sheet
 
 print("done")

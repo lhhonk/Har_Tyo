@@ -13,7 +13,6 @@ import scipy.optimize as sco #portfolio optimisation
 ############################################################
 #Excel workbook 'Main_i.xlsx' needs to be open to run the code properly
 wb = xw.Book('Ohjelmoinnin harjoitusyö/Main_i.xlsx')
-wb.save()
 
 #Worksheet import
 ws1 = wb.sheets['Dashboard']
@@ -31,9 +30,11 @@ def reset_worksheet_dashboard():
     for chart in ws1.charts:
         chart.delete()
 
-# Testing the function
+#Deleting the content before new content
 reset_worksheet_dashboard()
 
+#Saving the workbooks, otherwise the new tickers - typed in as user desires - wont be used in the new calculation
+wb.save()
 ############################################################
 #Portfolio testing
 ############################################################
@@ -207,23 +208,22 @@ avg_returns = returns.mean() * 12 #average returns
 cov_mat = returns.cov() * 12 #covariance-matrix 
 rf_rate = 0 #oletetaan riskittömäksi 0%
 
-#plottaus(returns)
-#equal_weight_returns(returns)
-#print(form_max_sharpe_portfolio())
-#print(form_min_var_portfolio())
-
-plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio()))
-plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #kahden plotin tekemiseen
-plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns)))
+#Defining the plot variables with a 'Figure' variable type
+plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio())) #(Max sharpe portfolio, plot)
+plot2 = plt.figure(compare_portfolios(form_max_sharpe_portfolio(), form_min_var_portfolio())) #(Price, doubleplot)
+plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns))) #(Return, histogram)
 
 ############################################################
 #Plotting and printing to excel
 ############################################################
-
 print("Start plotting from \n I \n I \n here")
 
+#Moving the plots to the excel 'update=True -> as we want to update the plot every time the script is run'
 ws1.pictures.add(plot1, name='plot1', update=True)
 ws1.pictures.add(plot2, name='plot2', update=True)
 ws1.pictures.add(plot3, name='plot3', update=True)
+
+#Printing the ticker data and portfolio data to the sheet
+
 
 print("done")

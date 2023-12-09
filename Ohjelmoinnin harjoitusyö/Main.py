@@ -23,12 +23,9 @@ def reset_worksheet_dashboard():
     wb = xw.Book('Main_i.xlsx')
     ws1 = wb.sheets['Dashboard']
 
-    # Define the range starting from "J2" to the end of the worksheet
-    ws1.range('J2:XFD1048576').clear_contents()
-
-    # Deleting charts
-    for chart in ws1.charts:
-        chart.delete()
+    # Define the range for deletion and deleting the content from the 'variance, mean and sharpe' table
+    ws1.range('K5:M1048576').clear_contents()
+    ws1.range('J6:J1048576').clear_contents()
 
 #Deleting the content before new content
 reset_worksheet_dashboard()

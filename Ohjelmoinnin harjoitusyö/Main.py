@@ -1,4 +1,11 @@
-#pip install "xlwings[all]"            #Numpy, pandas, matplotlib, Pillow, Jinja2
+###Pip install copy-paste:
+#pip install "xlwings[all]"    (might as well work with 'pip install xlwings', but with experience, it often did not)
+#pip install openpyxl    (Not on the list of imports, but for some package, it needs openpyxl to work)
+#pip install pandas
+#pip install yfinance
+#pip install warnings
+#pip install matplotlib
+#pip install scipy
 
 import xlwings as xw #xlwings for excel manipulation
 import pandas as pd #for data manipulation with dataframes
@@ -257,7 +264,7 @@ plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns))) #(Retur
 #Plotting and printing to excel
 ############################################################
 
-#moving the plots to the excel 'update=True -> as we want to update the plot every time the script is run'
+#moving the plots to the excel 'update=True' -> as we want to update the plot every time the script is run
 ws1.pictures.add(plot1, name='plot1', update=True)
 ws1.pictures.add(plot2, name='plot2', update=True)
 ws1.pictures.add(plot3, name='plot3', update=True)

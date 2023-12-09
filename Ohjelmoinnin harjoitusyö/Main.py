@@ -25,8 +25,7 @@ def reset_worksheet_dashboard():
     ws1 = wb.sheets['Dashboard']
 
     # Define the range for deletion and deleting the content from the 'variance, mean and sharpe' table
-    ws1.range('K5:M1048576').clear_contents()
-    ws1.range('J6:J1048576').clear_contents()
+    ws1.range('J6:M1048576').clear_contents()
 
 #Deleting the content before new content
 reset_worksheet_dashboard()
@@ -78,7 +77,7 @@ def get_portf_rtn(weights, avg_rtns): #calculate returns for any portfolio
 
 def form_min_var_portfolio(): #form minimum variance portfolio weights
     print("Processing...")
-    rtns_range = np.linspace(-0.50, 0.50, 200) #considered range of returns, next line of code will run function with all expected returns
+    rtns_range = np.linspace(-0.50, 0.50, 50) #considered range of returns, next line of code will run function with all expected returns
     efficient_portfolios = get_efficient_frontier(avg_returns, cov_mat, rtns_range) #calculating the efficient frontier and placing them in a list
     vols_range = [x["fun"] for x in efficient_portfolios] #extracting volatilities of efficient portfolios
 
@@ -158,7 +157,7 @@ def get_portf_vol(w, cov_mat): #get portfolio volatility
 def hintakaavio(weights): #plotting portfolio returns
     portfolio_returns = pd.Series(np.dot(weights, returns.T), index=returns.index)
     cumulative_returns = (1 + portfolio_returns).cumprod() * 100
-
+    print(cumulative_returns)
     return plottaus(cumulative_returns)
 
 def compare_portfolios(weights1, weights2): #plotting returns of two portfolios in same graph
@@ -188,6 +187,55 @@ def plot_return_histogram(returns, title='Tuottojakauma', xlabel='Returns'): #pl
     plt.ylabel('Tiheys')
     return plt.gcf()
 
+def get_combined_returns(returns):
+    # Get portfolio weights
+    min_var_weights = form_min_var_portfolio()
+    max_sharpe_weights = form_max_sharpe_portfolio()
+
+    # Calculate portfolio returns
+    min_var_returns = pd.Series(np.dot(min_var_weights, returns.T), index=returns.index)
+    max_sharpe_returns = pd.Series(np.dot(max_sharpe_weights, returns.T), index=returns.index)
+
+    # Add to the returns DataFrame in the desired order
+    combined_returns = pd.DataFrame()
+    combined_returns['Min Var Portfolio'] = min_var_returns
+    combined_returns['Max Sharpe Portfolio'] = max_sharpe_returns
+
+    # Concatenate with individual ticker returns
+    combined_returns = pd.concat([combined_returns, returns], axis=1)
+
+    return combined_returns
+
+def calculate_metrics(combined_returns, rf_rate=0):
+    metrics = pd.DataFrame(index=combined_returns.columns, columns=['Return', 'Volatility', 'Sharpe Ratio'])
+
+    for column in combined_returns.columns:
+        # Annualize the returns and volatility
+        annual_return = np.sum(combined_returns[column].mean()) * 252
+        annual_volatility = combined_returns[column].std() * np.sqrt(252)
+        print(column)
+        print(annual_return)
+        print(annual_volatility)
+        # Sharpe ratio
+        sharpe_ratio = (annual_return - rf_rate) / annual_volatility
+
+        # Add to DataFrame
+        metrics.loc[column] = [annual_return, annual_volatility, sharpe_ratio]
+        print(sharpe_ratio)
+
+    return metrics
+
+def print_to_excel(metrics, ws):
+    for i, (index, row) in enumerate(metrics.iterrows(), start=5):
+        ws.range(f'J{i+1}').value = index  # Ticker/Portfolio name
+        ws.range(f'K{i+1}').value = row['Return']
+        ws.range(f'L{i+1}').value = row['Volatility']
+        ws.range(f'M{i+1}').value = row['Sharpe Ratio']
+
+# Example usage
+
+
+
 ############################################################
 #Downloading the data from excel
 ############################################################
@@ -206,9 +254,14 @@ try:
 except Exception as e:
     print(f"Error during download: {e}")
 
+
 avg_returns = returns.mean() * 12 #average returns
 cov_mat = returns.cov() * 12 #covariance-matrix 
 rf_rate = 0 #assume risk-free rate to be 0%
+
+combined_returns = get_combined_returns(returns)
+metrics = calculate_metrics(combined_returns)
+print_to_excel(metrics, ws1)  # Assuming ws1 is your target worksheet
 
 #Defining the plot variables with a 'Figure' variable type
 plot1 = plt.figure(hintakaavio(form_max_sharpe_portfolio())) #(Max sharpe portfolio, plot)

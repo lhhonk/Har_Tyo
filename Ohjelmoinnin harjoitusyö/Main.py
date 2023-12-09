@@ -11,6 +11,7 @@ import scipy.optimize as sco #portfolio optimisation
 ############################################################
 #Excel setting
 ############################################################
+
 #Excel workbook 'Main_i.xlsx' needs to be open to run the code properly
 wb = xw.Book('Ohjelmoinnin harjoitusyö/Main_i.xlsx')
 
@@ -35,6 +36,7 @@ reset_worksheet_dashboard()
 
 #Saving the workbooks, otherwise the new tickers - typed in as user desires - wont be used in the new calculation
 wb.save()
+
 ############################################################
 #Portfolio testing
 ############################################################
@@ -153,9 +155,6 @@ def neg_sharpe_ratio(w, avg_rtns, cov_mat, rf_rate): #no need for for-loop, beca
     portf_sharpe_ratio = (portf_returns - rf_rate) / portf_volatility
     return -portf_sharpe_ratio
 
-def get_portf_rtn(w, avg_rtns): #get portfolio return
-    return np.sum(avg_rtns * w)
-
 def get_portf_vol(w, cov_mat): #get portfolio volatility
     return np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
 
@@ -222,6 +221,7 @@ plot3 = plt.figure(plot_return_histogram(equal_weight_returns(returns))) #(Retur
 ############################################################
 #Plotting and printing to excel
 ############################################################
+
 print("Start plotting from \n I \n I \n here")
 
 #Moving the plots to the excel 'update=True -> as we want to update the plot every time the script is run'
@@ -230,6 +230,5 @@ ws1.pictures.add(plot2, name='plot2', update=True)
 ws1.pictures.add(plot3, name='plot3', update=True)
 
 #Printing the ticker data and portfolio data to the sheet
-
 
 print("done")

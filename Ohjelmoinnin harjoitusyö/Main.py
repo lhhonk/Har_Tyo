@@ -13,7 +13,7 @@ import yfinance as yf #to download data from yahoo finance
 import warnings #disable possible warnings
 import matplotlib.pyplot as plt #plotting data
 import numpy as np #data manipulation
-import scipy.optimize as sco #portfolio optimisation
+import scipy.optimize as sco #portfolio optimization
 
 ############################################################
 #Excel setting
@@ -161,7 +161,7 @@ def neg_sharpe_ratio(w, avg_rtns, cov_mat, rf_rate): #no need for for-loop, beca
 def get_portf_vol(w, cov_mat): #get portfolio volatility
     return np.sqrt(np.dot(w.T, np.dot(cov_mat, w)))
 
-def hintakaavio(weights): #plotting portfolio returns
+def hintakaavio(weights): #plotting portfolio returns (Max Sharpe Portfolio)
     portfolio_returns = pd.Series(np.dot(weights, returns.T), index=returns.index)
     cumulative_returns = (1 + portfolio_returns).cumprod() * 100
     print(cumulative_returns)
@@ -269,6 +269,7 @@ ws1.pictures.add(plot1, name='plot1', update=True)
 ws1.pictures.add(plot2, name='plot2', update=True)
 ws1.pictures.add(plot3, name='plot3', update=True)
 
+#saving after calculation
 wb.save()
 
 print("done")
